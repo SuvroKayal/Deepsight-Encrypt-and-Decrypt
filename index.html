@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deepsight</title>
+  <link rel="icon" type="image/png" href="Attachments/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <div class="layout-wrapper">
+    
+    <div class="visual-section">
+      <div id="canvas-container"></div>
+      
+      <div class="visual-info-card">
+        <h2 id="desc-title">Deepsight Engine</h2>
+        <p id="desc-text">Visualizing real-time symmetric and index-shift transformations. Watch the artifact react to your data sequences as you type.</p>
+      </div>
+    </div>
+
+    <div class="ui-section">
+      <div id="app-container">
+        
+        <div id="stage-input" class="view-stage active">
+          <h1>Deepsight</h1>
+          
+          <div>
+            <div class="theme-toggle">
+              <button class="toggle-btn active" id="btn-enc" onclick="switchTheme('encrypt')">Encrypt</button>
+              <button class="toggle-btn" id="btn-dec" onclick="switchTheme('decrypt')">Decrypt</button>
+            </div>
+          </div>
+
+          <div>
+            <label>Chose your Friend</label>
+            <select id="algo-sel">
+              <option value="0">Vikram</option>
+              <option value="1">Advait</option>
+              <option value="2">Darpan</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Input Sequence</label>
+            <textarea id="inp-ta" placeholder="Paste or type sequence here..."></textarea>
+          </div>
+
+          <button class="action-btn" onclick="executeProcess()">Execute Transformation</button>
+        </div>
+
+        <div id="stage-output" class="view-stage">
+          <h1>Transmission Log</h1>
+          
+          <div class="output-wrapper">
+            <div class="output-header">
+              <span class="status-badge" id="status-badge">STANDBY</span>
+              <button class="copy-btn" id="copy-btn" onclick="copyToClipboard()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy Data
+              </button>
+            </div>
+            <div class="output-content" id="out-text">
+              Awaiting input sequence...
+            </div>
+          </div>
+
+          <button class="action-btn secondary-btn" onclick="resetProcess()">Begin New Operation</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

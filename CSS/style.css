@@ -39,7 +39,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  position: relative; /* Crucial for absolute corners */
+  position: relative;
 }
 
 /* --- PEACOCK CORNER ORNAMENTS --- */
@@ -47,14 +47,13 @@ body {
   position: absolute;
   width: 160px;
   height: 160px;
-  pointer-events: none; /* Lets you click through the corners */
+  pointer-events: none;
   z-index: 100;
-  color: var(--accent); /* Hooks into your Saffron/Blue theme automatically */
-  opacity: 0.15; /* Keeps it subtle like a watermark */
+  color: var(--accent);
+  opacity: 0.15;
   transition: color 0.8s ease, opacity 0.3s ease;
 }
 
-/* Positioning and rotating each corner correctly */
 .top-left { top: -10px; left: -10px; }
 .top-right { top: -10px; right: -10px; transform: rotate(90deg); }
 .bottom-right { bottom: -10px; right: -10px; transform: rotate(180deg); }
@@ -126,7 +125,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 10; /* Ensures the form stays above the corner watermarks */
+  z-index: 10;
 }
 
 /* --- UI ELEMENTS --- */
@@ -325,13 +324,16 @@ textarea:focus, select:focus {
 
 /* --- RESPONSIVE MOBILE LAYOUT --- */
 @media (max-width: 900px) {
-  /* Lighter backgrounds for mobile readability */
+
+  /* Lighter backgrounds + light saffron accent for mobile only */
   :root {
     --bg-base: #0d1b35;
     --panel-bg: #1a2744;
     --input-bg: rgba(255, 255, 255, 0.07);
-    --glass-border: rgba(255, 153, 51, 0.35);
+    --glass-border: rgba(255, 185, 90, 0.35);
     --text-muted: #b0bfd4;
+    --accent: #FFB347; /* Light Saffron — mobile only */
+    --accent-hover: #e8a03d;
   }
 
   [data-theme="decrypt"] {
@@ -340,6 +342,7 @@ textarea:focus, select:focus {
     --input-bg: rgba(255, 255, 255, 0.07);
     --glass-border: rgba(0, 102, 255, 0.45);
     --text-muted: #b0bfd4;
+    /* decrypt keeps its blue accent on mobile, no change needed */
   }
 
   .layout-wrapper {
@@ -348,7 +351,6 @@ textarea:focus, select:focus {
     overflow: auto;
   }
   
-  /* Make corners smaller on mobile */
   .royal-corner {
     width: 80px;
     height: 80px;
@@ -360,11 +362,13 @@ textarea:focus, select:focus {
     border-right: none;
     border-bottom: 1px solid var(--glass-border);
   }
+
   .ui-section {
     width: 100%;
     height: auto;
     padding: 20px;
   }
+
   .visual-info-card {
     bottom: 20px; left: 20px; right: 20px; padding: 16px;
   }

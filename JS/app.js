@@ -1,13 +1,12 @@
 // --- 1. SPA ROUTING & STATE ---
 let currentMode = 'encrypt';
-let activeAgent = 'Sahaya';
+let activeAgent = 'Vikram'; 
 let isAnimating = true;
 
 window.navigateTo = function(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(`page-${pageId}`).classList.add('active');
     
-    // Stop the 3D animation to save resources on the clean app page
     if(pageId === 'app') {
         isAnimating = false;
     } else {
@@ -41,11 +40,10 @@ window.toggleSubmenu = function(e) {
 window.selectAgent = function(agentName) {
     activeAgent = agentName;
     
-    // Close menus
     document.getElementById('agent-menu').classList.remove('show');
     document.querySelector('.has-submenu').classList.remove('open');
     
-    appendMessage('system', `Switched protocol to Friend: ${agentName}.`);
+    appendMessage('system', `Protocol shifted. You are now working with ${agentName}.`);
 }
 
 document.addEventListener('click', () => {
@@ -53,9 +51,21 @@ document.addEventListener('click', () => {
     document.querySelector('.has-submenu')?.classList.remove('open');
 });
 
-// --- 3. CHAT LOGIC ---
-function encrypt(text) { return text.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 3)).join(''); }
-function decrypt(text) { return text.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 3)).join(''); }
+// --- 3. FRIEND/AGENT CRYPTO LOGIC ---
+const agents = {
+    'Vikram': {
+        encrypt: (text) => text.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 4)).join(''),
+        decrypt: (text) => text.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 4)).join('')
+    },
+    'Darpan': {
+        encrypt: (text) => text.split('').reverse().map(c => String.fromCharCode(c.charCodeAt(0) + 5)).join(''),
+        decrypt: (text) => text.split('').reverse().map(c => String.fromCharCode(c.charCodeAt(0) - 5)).join('')
+    },
+    'Suvro': {
+        encrypt: (text) => text.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 75)).join(''),
+        decrypt: (text) => text.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 75)).join('')
+    }
+};
 
 window.processMessage = function() {
     const inputEl = document.getElementById('chat-input');
@@ -66,7 +76,10 @@ window.processMessage = function() {
     inputEl.value = '';
 
     setTimeout(() => {
-        let result = currentMode === 'encrypt' ? encrypt(text) : decrypt(text);
+        let result = currentMode === 'encrypt' 
+            ? agents[activeAgent].encrypt(text) 
+            : agents[activeAgent].decrypt(text);
+            
         appendMessage('system', `[${activeAgent}] ${result}`);
     }, 400); 
 }
@@ -87,13 +100,13 @@ document.getElementById('chat-input').addEventListener('keypress', function (e) 
     }
 });
 
-// --- 4. THREE.JS PAINTERLY SUNSET WAVE BACKGROUND ---
+// --- 4. THREE.JS CREASE-FREE COBALT WATER BACKGROUND ---
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x1a0a1f, 0.012); // warm dusk haze instead of cold navy
+scene.fog = new THREE.FogExp2(0x00112b, 0.009); // matches the trough colour, softer falloff so the gradient reads
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 15, 40);
+camera.position.set(0, 10, 45); 
 camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -101,97 +114,57 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 container.appendChild(renderer.domElement);
 
-// Cinematic Sunset Lighting (Coral / Magenta / Gold Palette)
-const ambientLight = new THREE.AmbientLight(0xff9d6b, 0.55); // warm peach base fill
+// Lighting setup — tuned down from the previous 2.5 / 3.5 intensities, which were
+// bright enough to blow the surface out toward flat white. This keeps it premium
+// and glossy while letting the blue gradient below actually show through.
+const ambientLight = new THREE.AmbientLight(0x1c3b63, 0.6); // soft cobalt fill
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0x8e3b6f, 1.1); // deep magenta/purple shadow caster
-dirLight.position.set(-20, 20, 10);
+const dirLight = new THREE.DirectionalLight(0xbfe9ff, 1.3); // icy key light
+dirLight.position.set(-30, 40, -10);
 scene.add(dirLight);
 
-const pointLight = new THREE.PointLight(0xffd27a, 1.9, 120); // warm gold highlight for the crests
-pointLight.position.set(20, 10, 20);
+const pointLight = new THREE.PointLight(0x7dd3fc, 1.6, 160); // sky-blue sparkle on the crests
+pointLight.position.set(15, 18, 25);
 scene.add(pointLight);
 
-// Creating the Water Plane — a bit higher-res so the noise-driven surface reads smoothly
-const geometry = new THREE.PlaneGeometry(200, 200, 120, 120);
+const geometry = new THREE.PlaneGeometry(250, 250, 150, 150); 
 geometry.rotateX(-Math.PI / 2);
 
-// Per-vertex colour buffer so the wave can carry a painterly, multi-hued gradient
+// Per-vertex colour buffer — lets the wave carry an actual blue gradient instead
+// of one flat cobalt tone, so the crests and troughs read as distinct depths.
 const vertexCount = geometry.attributes.position.count;
 const colorArray = new Float32Array(vertexCount * 3);
 geometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
 
-// Matte-ish "oil paint" material — vertex colours do the work, not reflections
-const material = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    roughness: 0.4,
-    metalness: 0.12,
+const material = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,          // white lets the vertex colours drive the hue untinted
     vertexColors: true,
+    metalness: 0.5,
+    roughness: 0.28,
+    clearcoat: 0.6,
+    clearcoatRoughness: 0.15,
+    transparent: true,
+    opacity: 0.94,
     wireframe: false
 });
 
 const waterPlane = new THREE.Mesh(geometry, material);
-waterPlane.position.y = -5;
+waterPlane.position.y = -6;
 scene.add(waterPlane);
 
-// --- Lightweight 2D value-noise (no external deps) ---
-// Gives organic, non-repeating motion instead of a mechanical sine grid —
-// the same building block behind most "painterly fluid" look-dev tricks.
-const _noisePerm = new Uint8Array(512);
-(function seedNoise(seed) {
-    let s = seed;
-    const rand = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
-    const p = new Uint8Array(256);
-    for (let i = 0; i < 256; i++) p[i] = i;
-    for (let i = 255; i > 0; i--) {
-        const j = Math.floor(rand() * (i + 1));
-        const tmp = p[i]; p[i] = p[j]; p[j] = tmp;
-    }
-    for (let i = 0; i < 512; i++) _noisePerm[i] = p[i & 255];
-})(1337);
-
-function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-function lerp(a, b, t) { return a + t * (b - a); }
-function grad(hash, x, y) {
-    const h = hash & 3;
-    const u = h < 2 ? x : y;
-    const v = h < 2 ? y : x;
-    return ((h & 1) ? -u : u) + ((h & 2) ? -2 * v : 2 * v);
-}
-function noise2D(x, y) {
-    const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
-    x -= Math.floor(x); y -= Math.floor(y);
-    const u = fade(x), v = fade(y);
-    const aa = _noisePerm[X + _noisePerm[Y]];
-    const ab = _noisePerm[X + _noisePerm[Y + 1]];
-    const ba = _noisePerm[X + 1 + _noisePerm[Y]];
-    const bb = _noisePerm[X + 1 + _noisePerm[Y + 1]];
-    const x1 = lerp(grad(aa, x, y), grad(ba, x - 1, y), u);
-    const x2 = lerp(grad(ab, x, y - 1), grad(bb, x - 1, y - 1), u);
-    return lerp(x1, x2, v); // ~ -1..1
-}
-// Fractal Brownian Motion: layers a few noise octaves for richer, brushstroke-like detail
-function fbm(x, y, octaves) {
-    let total = 0, amp = 1, freq = 1, maxAmp = 0;
-    for (let i = 0; i < octaves; i++) {
-        total += noise2D(x * freq, y * freq) * amp;
-        maxAmp += amp;
-        amp *= 0.5;
-        freq *= 2;
-    }
-    return total / maxAmp; // normalized ~ -1..1
-}
-function smootherStep(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-
-// Sunset gradient stops, from deep trough to sunlit foam crest (mirrors the reference painting)
+// Premium blue gradient, deep trough to icy sunlit crest — pulled straight from
+// the app's own brand blues (cobalt #002e73, ocean #0284c7, sky #38bdf8, ice #bae6fd)
+// so the landing animation and the workspace UI feel like one palette.
 const gradientStops = [
-    { t: 0.00, color: new THREE.Color(0x0e4d5c) }, // deep teal trough
-    { t: 0.30, color: new THREE.Color(0x5b2c6f) }, // violet
-    { t: 0.52, color: new THREE.Color(0xc4348c) }, // magenta / pink
-    { t: 0.75, color: new THREE.Color(0xff7a30) }, // sunset orange
-    { t: 1.00, color: new THREE.Color(0xffe9a8) }  // pale gold foam
+    { t: 0.00, color: new THREE.Color(0x00112b) }, // near-black deep navy trough
+    { t: 0.28, color: new THREE.Color(0x002e73) }, // deep cobalt
+    { t: 0.55, color: new THREE.Color(0x0284c7) }, // brand ocean blue
+    { t: 0.80, color: new THREE.Color(0x38bdf8) }, // bright sky blue
+    { t: 1.00, color: new THREE.Color(0xd8f3ff) }  // pale icy foam highlight
 ];
+
+function smootherStep(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
 
 const _tmpColor = new THREE.Color();
 function getWaveColor(t, target) {
@@ -199,7 +172,6 @@ function getWaveColor(t, target) {
     for (let i = 0; i < gradientStops.length - 1; i++) {
         const a = gradientStops[i], b = gradientStops[i + 1];
         if (t >= a.t && t <= b.t) {
-            // smootherstep instead of a linear lerp — softens the seams between colour bands
             const localT = smootherStep((t - a.t) / (b.t - a.t));
             return target.copy(a.color).lerp(b.color, localT);
         }
@@ -211,13 +183,11 @@ let time = 0;
 const clock = new THREE.Clock();
 
 function animate() {
-    if (!isAnimating) return; // Pauses on App page
+    if (!isAnimating) return; 
 
     requestAnimationFrame(animate);
-    // Delta-time driven, so motion speed stays identical whether the display
-    // runs at 30fps, 60fps or 120fps — this alone removes most of the "jitter" feel.
     const delta = Math.min(clock.getDelta(), 0.05);
-    time += delta * 0.9;
+    time += delta * 1.2; 
 
     const positions = waterPlane.geometry.attributes.position;
     const colors = waterPlane.geometry.attributes.color;
@@ -226,32 +196,35 @@ function animate() {
         const x = positions.getX(i);
         const z = positions.getZ(i);
 
-        // Domain warp: distort the sampling coordinates with their own slow-moving noise
-        // field before reading the main wave. This is what turns a flat grid ripple into
-        // the swirling, hand-painted current in the reference art.
-        const warpX = fbm((x + time * 6) * 0.01, (z - time * 4) * 0.01, 2) * 8;
-        const warpZ = fbm((z - time * 5) * 0.01, (x + time * 3) * 0.01, 2) * 8;
-
-        // Large rolling swells (fbm) + a fine ripple layer for brush-like surface texture
-        const swell = fbm((x + warpX) * 0.022 + time * 0.15, (z + warpZ) * 0.022 - time * 0.1, 4) * 5.5;
-        const ripple = Math.sin((x + z) * 0.15 + time * 1.4) * 0.35;
-        const height = swell + ripple;
+        // Mathematical Wave Interference (Replaces the blocky FBM noise)
+        // By overlapping multiple smooth sine/cosine waves traveling in different directions,
+        // we create a perfectly smooth, crease-free rolling liquid surface.
+        let height = 0;
+        
+        // Large rolling primary swells
+        height += Math.sin((x * 0.02) + (z * 0.015) + time * 0.8) * 3.5;
+        height += Math.cos((x * 0.015) - (z * 0.02) + time * 0.6) * 2.5;
+        
+        // Medium secondary cross-currents
+        height += Math.sin((x * 0.04) + (z * 0.03) - time * 1.1) * 1.2;
+        
+        // Fine surface ripples to catch the specular highlights
+        height += Math.cos((x * 0.08) - (z * 0.08) + time * 1.5) * 0.4;
 
         positions.setY(i, height);
 
-        // Paint the crest/trough gradient: peaks glow gold/orange, troughs sink into teal/violet
-        const t = (height + 5) / 10;
+        // Paint the depth gradient: crests brighten toward icy sky blue, troughs sink to navy
+        const t = (height + 8) / 16; // amplitude sum is ~7.6, so ±8 covers the full range
         getWaveColor(t, _tmpColor);
         colors.setXYZ(i, _tmpColor.r, _tmpColor.g, _tmpColor.b);
     }
 
-    // Crucial for lighting to reflect correctly off the moving waves
     waterPlane.geometry.computeVertexNormals();
     positions.needsUpdate = true;
     colors.needsUpdate = true;
 
-    // Slow camera drift for extra aesthetic feel
-    camera.position.x = Math.sin(time * 0.2) * 5;
+    // Cinematic drifting camera
+    camera.position.x = Math.sin(time * 0.15) * 6;
     camera.lookAt(0, 0, 0);
 
     renderer.render(scene, camera);

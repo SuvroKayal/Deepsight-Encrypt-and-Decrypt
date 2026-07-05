@@ -6,11 +6,11 @@
   <title>Deepsight | Secure Workspace</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  
+  <link rel="stylesheet" href="CSS/style.css">
+  <link rel="icon" type="image/png" href="Attachments/logo.png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   
-  <script src="js/app.js" defer></script>
+  <script src="JS/app.js" defer></script>
 </head>
 <body>
 
@@ -20,7 +20,7 @@
     <div class="landing-overlay">
       <div class="landing-content">
         <h1>Deepsight</h1>
-        <p>Navigate the unseen currents of data. A serene, encapsulated cryptographic environment designed for seamless and secure text transformations.</p>
+        <p>DeepSight provides a fast, secure, and intuitive environment for encryption, decryption, and advanced text transformation.</p>
         <button class="enter-btn" onclick="navigateTo('app')">
           Enter <span class="arrow">→</span>
         </button>
@@ -57,15 +57,15 @@
             <div class="menu-item has-submenu" onclick="toggleSubmenu(event)">
               Friends <span>▸</span>
               <div class="submenu" id="friends-submenu">
-                <div class="menu-item" onclick="selectAgent('Sahaya')">Sahaya</div>
-                <div class="menu-item" onclick="selectAgent('Mitra')">Mitra</div>
-                <div class="menu-item" onclick="selectAgent('Anugraha')">Anugraha</div>
+                <div class="menu-item" onclick="selectAgent('Vikram')">Vikram</div>
+                <div class="menu-item" onclick="selectAgent('Darpan')">Darpan</div>
+                <div class="menu-item" onclick="selectAgent('Suvro')">Suvro</div>
               </div>
             </div>
           </div>
         </div>
 
-        <textarea id="chat-input" placeholder="Write something..."></textarea>
+        <textarea id="chat-input" placeholder="Initiate sequence..."></textarea>
         
         <button class="send-btn" onclick="processMessage()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" /></svg>

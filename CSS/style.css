@@ -1,12 +1,16 @@
 :root {
-  /* Google Inspired Colors for Workspace */
-  --bg-app: #f8f9fa;
+  /* Premium Soothing Blue Palette */
+  --bg-app: #e8f1f8; /* Soft ice blue background */
   --surface: #ffffff;
-  --text-main: #202124;
-  --text-muted: #5f6368;
-  --google-blue: #1a73e8;
-  --google-blue-hover: #1b66c9;
-  --border-color: #dadce0;
+  --surface-glass: rgba(255, 255, 255, 0.95);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary-blue: #0284c7; /* Vibrant ocean blue */
+  --primary-hover: #0369a1;
+  --border-color: #cbd5e1;
+  
+  --bubble-user: #0284c7;
+  --bubble-sys: #f1f5f9;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; user-select: text; }
@@ -38,18 +42,7 @@ button { user-select: none; }
 /* =========================================
    PAGE 1: DEEP WATER LANDING
 ========================================= */
-#page-landing {
-  background: linear-gradient(
-    180deg,
-    #ffb066 0%,
-    #ff7a52 16%,
-    #e94f7a 34%,
-    #b83a91 50%,
-    #6b2c7f 66%,
-    #2c1442 82%,
-    #10141f 100%
-  );
-}
+#page-landing { background-color: #020611; }
 
 #canvas-container {
   position: absolute;
@@ -62,7 +55,8 @@ button { user-select: none; }
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: linear-gradient(to right, rgba(18, 6, 22, 0.92) 0%, rgba(24, 8, 24, 0.55) 45%, transparent 100%);
+  /* Updated to a Deep Cobalt-tinted dark gradient */
+  background: linear-gradient(to right, rgba(0, 11, 24, 0.95) 0%, rgba(0, 35, 102, 0.6) 45%, transparent 100%);
   z-index: 2;
   display: flex;
   align-items: center;
@@ -84,7 +78,7 @@ button { user-select: none; }
 .landing-content p {
   font-size: 18px;
   line-height: 1.6;
-  color: #e2e8f0;
+  color: #bae6fd;
   margin-bottom: 40px;
   font-weight: 300;
 }
@@ -106,20 +100,19 @@ button { user-select: none; }
 }
 
 .enter-btn:hover {
-  background: #ff8552;
-  color: #1a0a1f;
+  background: #38bdf8;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 122, 82, 0.45);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
 }
 
 .arrow { font-size: 18px; transition: transform 0.3s ease; }
 .enter-btn:hover .arrow { transform: translateX(5px); }
 
 /* =========================================
-   PAGE 2: NOMINAL WORKSPACE
+   PAGE 2: NOMINAL WORKSPACE (PC)
 ========================================= */
 #page-app {
-  background-color: var(--bg-app);
+  background: var(--bg-app);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -129,13 +122,14 @@ button { user-select: none; }
   width: 100%;
   max-width: 900px;
   height: 90vh;
-  background: var(--surface);
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(2, 132, 199, 0.08), 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255,255,255,0.5);
 }
 
 .workspace-header {
@@ -154,12 +148,11 @@ button { user-select: none; }
   display: flex; align-items: center; justify-content: center;
   transition: background 0.2s;
 }
-.icon-btn:hover { background: var(--bg-app); color: var(--text-main); }
+.icon-btn:hover { background: var(--bg-app); color: var(--primary-blue); }
 
 .mode-toggle {
   display: flex; background: var(--bg-app);
   border-radius: 20px; padding: 4px;
-  border: 1px solid var(--border-color);
 }
 
 .toggle-btn {
@@ -169,7 +162,11 @@ button { user-select: none; }
   font-family: 'Outfit', sans-serif;
 }
 
-.toggle-btn.active { background: var(--surface); color: var(--google-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.toggle-btn.active { 
+  background: var(--surface); 
+  color: var(--primary-blue); 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+}
 
 /* Chat Window */
 .chat-window {
@@ -177,7 +174,7 @@ button { user-select: none; }
   display: flex; flex-direction: column; gap: 24px;
 }
 
-.chat-message { display: flex; flex-direction: column; max-width: 75%; }
+.chat-message { display: flex; flex-direction: column; max-width: 80%; }
 .chat-message.user { align-self: flex-end; align-items: flex-end; }
 .chat-message.system { align-self: flex-start; align-items: flex-start; }
 
@@ -188,19 +185,20 @@ button { user-select: none; }
 }
 
 .user .bubble {
-  background: var(--google-blue); color: #fff;
+  background: var(--bubble-user); color: #fff;
   border-bottom-right-radius: 4px;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.2);
 }
 
 .system .bubble {
-  background: var(--bg-app); color: var(--text-main);
+  background: var(--bubble-sys); color: var(--text-main);
   border-bottom-left-radius: 4px; border: 1px solid var(--border-color);
 }
 
 /* Input Area & + Menu */
 .input-container {
   padding: 20px 24px; border-top: 1px solid var(--border-color);
-  display: flex; gap: 16px; background: var(--surface);
+  display: flex; gap: 12px; background: var(--surface);
   align-items: flex-end;
 }
 
@@ -208,8 +206,7 @@ button { user-select: none; }
 
 .plus-btn {
   background: var(--bg-app); color: var(--text-muted);
-  border: 1px solid var(--border-color);
-  width: 44px; height: 44px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%; border: none;
   font-size: 24px; font-weight: 300; cursor: pointer;
   display: flex; justify-content: center; align-items: center;
   transition: all 0.2s;
@@ -219,24 +216,24 @@ button { user-select: none; }
 .popup-menu {
   position: absolute; bottom: 60px; left: 0;
   background: var(--surface); border: 1px solid var(--border-color);
-  border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  min-width: 150px; display: none; flex-direction: column;
+  border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  min-width: 160px; display: none; flex-direction: column;
   padding: 8px 0; z-index: 100;
 }
 .popup-menu.show { display: flex; }
 
 .menu-item {
-  padding: 10px 20px; font-size: 14px; color: var(--text-main);
+  padding: 12px 20px; font-size: 14px; color: var(--text-main); font-weight: 500;
   cursor: pointer; display: flex; justify-content: space-between;
-  position: relative;
+  position: relative; transition: background 0.2s;
 }
-.menu-item:hover { background: var(--bg-app); }
+.menu-item:hover { background: var(--bg-app); color: var(--primary-blue); }
 
 .submenu {
   position: absolute; bottom: -8px; left: 100%;
   background: var(--surface); border: 1px solid var(--border-color);
-  border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  min-width: 150px; display: none; flex-direction: column;
+  border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  min-width: 160px; display: none; flex-direction: column;
   padding: 8px 0; margin-left: 4px;
 }
 .menu-item.has-submenu.open .submenu { display: flex; }
@@ -246,14 +243,33 @@ textarea {
   background: var(--bg-app); border: 1px solid transparent;
   border-radius: 22px; color: var(--text-main); padding: 12px 20px;
   outline: none; resize: none; font-family: 'Outfit', sans-serif;
-  font-size: 15px; transition: border 0.2s; overflow-y: auto;
+  font-size: 15px; transition: all 0.3s ease; overflow-y: auto;
 }
-textarea:focus { border: 1px solid var(--google-blue); background: var(--surface); }
+textarea:focus { border: 1px solid var(--primary-blue); background: var(--surface); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1); }
 
 .send-btn {
-  background: transparent; color: var(--google-blue);
+  background: var(--primary-blue); color: #fff;
   border: none; width: 44px; height: 44px;
   border-radius: 50%; cursor: pointer; display: flex;
   justify-content: center; align-items: center; transition: all 0.2s ease;
 }
-.send-btn:hover { background: var(--bg-app); color: var(--google-blue-hover); }
+.send-btn:hover { background: var(--primary-hover); transform: scale(1.05); }
+
+/* =========================================
+   MOBILE RESPONSIVENESS (FULL SCREEN CHAT)
+========================================= */
+@media (max-width: 768px) {
+  .app-workspace {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+  
+  .landing-content { padding-left: 5%; padding-right: 5%; }
+  .landing-content h1 { font-size: 42px; }
+  
+  .chat-window { padding: 20px; }
+  .input-container { padding: 16px; padding-bottom: 24px; } /* Extra padding for phone bezels */
+}
